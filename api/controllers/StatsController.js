@@ -224,4 +224,21 @@ module.exports = {
       return res.badRequest(err);
     }
   },
+
+  getUserStats: async function (req, res) {
+    const {username, id} = req.body;
+    let selectedUser;
+    try {
+      if(!id){
+        selectedUser = await User.findOne({ username: username });
+      }
+      const selectedUserId = id ? id : selectedUser.id;
+      
+      const userStat = await sails.helpers.getUserStats(selectedUserId, username);
+
+      return res.ok({userStat});
+    } catch (err) {
+      return res.badRequest(err);
+    }
+  },
 };

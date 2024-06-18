@@ -56,6 +56,7 @@ module.exports.routes = {
 
   '/api/stats/seasons/current': 'StatsController.getCurrentStats',
   '/api/stats/seasons/:seasonId': 'StatsController.getSeasonStats',
+  '/api/stats/user': 'StatsController.getUserStats',
 
   '/api/game/create': 'game/create',
   '/api/game/getList': 'game/get-list',

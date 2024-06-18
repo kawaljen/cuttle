@@ -34,6 +34,7 @@
         </div>
       </template>
       <span class="player-name">{{ playerUsername }}</span>
+      <UserStats :player-username="playerUsername" />
     </div>
     <div v-else class="player-indicator" :style="{ padding: playerPadding }">
       <div class="avatar">
@@ -47,8 +48,13 @@
 
 <script>
 import { useI18n } from 'vue-i18n';
+import UserStats from './UserStats.vue';
+
 export default {
   name: 'PlayerReadyIndicator',
+  components: {
+    UserStats,
+  },
   props: {
     playerUsername: {
       type: String,
