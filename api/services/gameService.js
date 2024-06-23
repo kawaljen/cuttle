@@ -289,7 +289,13 @@ module.exports = {
       .then(function getPopulatedGame(values) {
         return gameService.populateGame({ gameId: values[0].id });
       })
-      .then(function publish(fullGame) {
+      .then(async function publish(fullGame) {
+        
+        //UseGameStateApi -> register and save a gamestate
+        if(sails.config.custom.useGameStateApi){
+           await sails.helpers.instantiateGamestate(fullGame.id, fullGame.players, fullGame.deck);
+        }
+
         Game.publish([fullGame.id], {
           change: 'initialize',
           game: fullGame,
