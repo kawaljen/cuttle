@@ -1,5 +1,8 @@
+const Player = require('../utils/Player');
+//const GameState = require('./GameState');
+
 const utils = require('../utils/convertCard');
-//const Player = require('../models/Player');
+
 
 module.exports = {
   friendlyName: 'unpack GameState',
@@ -59,7 +62,7 @@ module.exports = {
         faceCards : p0FaceCards,
         id : p0Id
       };
-      const updatedP0 = await Player.create( p0Data).fetch();  
+      const updatedP0 = new Player (p0Data);  
 
         const p1Data = { 
           pNum : 1, 
@@ -68,7 +71,7 @@ module.exports = {
           faceCards : p1FaceCards,
           id: p1Id
         };
-        const updatedP1 = await Player.create( p1Data).fetch();  
+        const updatedP1 = new Player (p1Data);  
 
         const convertedData ={   
                                   p0 : updatedP0,
@@ -87,9 +90,9 @@ module.exports = {
     
         const UpdatedData = {...gameStateRow, ...convertedData };
 
-        const updatedGameState = await GameState.create( UpdatedData).fetch();
+        //const updatedGameState = new GameState (UpdatedData);  
 
-        return exits.success(updatedGameState);
+        return exits.success(UpdatedData);
     } catch (err) {
       return exits.error(err.message); 
     }

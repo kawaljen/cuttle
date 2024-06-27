@@ -30,7 +30,7 @@ module.exports = {
 
     try {
     
-        return exits.success();
+        return exits.success(game, playedBy, moveType, phase);
     } catch (err) {
         return exits.error(err);
     }

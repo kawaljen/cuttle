@@ -14,7 +14,12 @@ module.exports = {
   },
 
   fn: async ({gameState }, exits) => {
+
+    setTimeout(() => {
+
       try{
+        
+          console.log('"Delayed for 1 second."');
         const convertedData={};
 
         const attributesToConvert = [
@@ -52,11 +57,13 @@ module.exports = {
 
         const combinedData = {...gameState, ...convertedData };
 
+      
+
         return exits.success(combinedData);
     } catch (err) {
         return exits.error(err.message); 
     }
-
+  }, '"1O000"');
   }
 };
 
