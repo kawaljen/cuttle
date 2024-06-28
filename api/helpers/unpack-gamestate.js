@@ -1,4 +1,3 @@
-const Player = require('../utils/Player');
 //const GameState = require('./GameState');
 
 const utils = require('../utils/convertCard');
@@ -15,19 +14,19 @@ module.exports = {
       description: 'GameStateRow - record from the database',
       required: true,
     },    
-    p0Id: {
-      type: 'number',
+    player0: {
+      type: 'ref',
       description: 'player0Id',
       required: true,
     },
-    p1Id: {
-      type: 'number',
+    player1: {
+      type: 'ref',
       description: 'player0Id',
       required: true,
     },
   },
 
-  fn: async ({gameStateRow, p0Id, p1Id  }, exits) => {
+  fn: async ({gameStateRow, player0, player1  }, exits) => {
       try{
 
         const attributesToConvert = [
@@ -55,23 +54,21 @@ module.exports = {
           playedCard, targetCardId, targetCard2Id, oneOff, oneOffTarget, twos, resolving
       ] = await Promise.all(allPromises);
 
-      const p0Data ={ 
+      const p0Data = { 
         pNum : 0, 
         hand : p0Hand, 
         points : p0Points, 
         faceCards : p0FaceCards,
-        id : p0Id
       };
-      const updatedP0 = new Player (p0Data);  
+      const updatedP0 = {...player0, ...p0Data};  
 
         const p1Data = { 
           pNum : 1, 
           hand : p1Hand, 
           points : p1Points, 
           faceCards : p1FaceCards,
-          id: p1Id
         };
-        const updatedP1 = new Player (p1Data);  
+        const updatedP1 =  {...player1, ...p1Data};  
 
         const convertedData ={   
                                   p0 : updatedP0,
