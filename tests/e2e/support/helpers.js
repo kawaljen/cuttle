@@ -632,3 +632,74 @@ export function assertGameState(pNum, fixture, spectating = false) {
   assertDomMatchesFixture(pNum, fixture, spectating);
   assertStoreMatchesFixture(fixture);
 }
+
+
+/**
+ * @param fixture:
+ * {
+ * 	 p0Hand: {suit: number, rank: number}[],
+ *   p0Points: {suit: number, rank: number}[],
+ *   p0FaceCards: {suit: number, rank: number}[],
+ *   p1Hand: {suit: number, rank: number}[],
+ *   p1Points: {suit: number, rank: number}[],
+ *   p1FaceCards: {suit: number, rank: number}[],
+ * }
+ */
+export function assertResGameStateixture(res,fixture) {
+
+  // Player 0
+  expect(cardListsMatch(res, fixture.p0Hand)).to.eq(
+    true,
+    `P0 Hand should match fixture, but actual: ${printCardList(
+      res.p0.hand,
+    )} did not match ficture: ${printCardList(fixture.p0Hand)}`,
+  );
+  expect(cardListsMatch(res.p0.points, fixture.p0Points)).to.eq(
+    true,
+    `P0 Points should match fixture, but actual: ${printCardList(
+      res.p0.points,
+    )} did not match ficture: ${printCardList(fixture.p0Points)}`,
+  );
+  expect(cardListsMatch(res.p0.faceCards, fixture.p0FaceCards)).to.eq(
+    true,
+    `P0 Face Cards should match fixture, but actual: ${printCardList(
+      res.p0.faceCards,
+    )} did not match ficture: ${printCardList(fixture.p0FaceCards)}`,
+  );
+  // Player 1
+  expect(cardListsMatch(res.p1.hand, fixture.p1Hand)).to.eq(
+    true,
+    `P1 Hand should match fixture, but actual: ${printCardList(
+      res.p1.hand,
+    )} did not match ficture: ${printCardList(fixture.p1Hand)}`,
+  );
+  expect(cardListsMatch(res.p1.points, fixture.p1Points)).to.eq(
+    true,
+    `P1 Points should match fixture, but actual: ${printCardList(
+      res.p1.points,
+    )} did not match ficture: ${printCardList(fixture.p1Points)}`,
+  );
+  expect(cardListsMatch(res.p1.faceCards, fixture.p1FaceCards)).to.eq(
+    true,
+    `P1 Face Cards should match fixture, but actual: ${printCardList(
+      res.p1.faceCards,
+    )} did not match ficture: ${printCardList(fixture.p1FaceCards)}`,
+  );
+}
+
+export function cardsArraysMatch(a, b) {
+  // If length is not equal
+  if (a.length != b.length){
+    return false;
+  }
+  a.sort();
+  b.sort();
+  // Comparing each element of array
+  for (let i = 0; i < a.length; i++){
+    if (a[i] != b[i]){
+      return false;
+    }
+  }
+
+  return true;
+}

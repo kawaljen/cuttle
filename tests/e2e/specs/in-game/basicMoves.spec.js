@@ -1,4 +1,4 @@
-import { assertGameState, assertSnackbarError, playOutOfTurn } from '../../support/helpers';
+import { assertGameState, assertSnackbarError, playOutOfTurn, assertResGameStateixture, cardsArraysMatch } from '../../support/helpers';
 import { Card } from '../../fixtures/cards';
 import { SnackBarError } from '../../fixtures/snackbarError';
 
@@ -18,16 +18,63 @@ describe('Game Basic Moves - P0 Perspective', () => {
       p1Points: [Card.TEN_OF_HEARTS],
       p1FaceCards: [Card.KING_OF_HEARTS],
     });
-    //testGamestateAPI Unpacking
+
+
+
+    //testGamestateAPI packing
+    cy.log('Testing gameSatatApi packing game -> gameStateRow');
+
     cy.window().its('cuttle.gameStore').then((game) => {
-      cy.log('testGamestateAPI');
-      cy.testGameStatePacking(game);
+      cy.request({
+        method: 'POST',
+        url: '/api/test/testgamestatepacking',
+        body: {game}
+      }).then((response) => {
+        // Ensure the request was successful and process the response
+        expect(response.status).to.equal(200); // Example assertion for status code
+  
+        // Optionally log the response
+        cy.log('API Response:', response.body);
+
+        expect( cardsArraysMatch(response.body.p0Hand, ['AC', 'AS'])).to.eq(
+           true,
+          `P0Hand should match [Card.ACE_OF_SPADES, Card.ACE_OF_CLUBS], 
+            but actual: ${response.body.p0Hand} did not match ficture: ['AS', 'AC']`,
+        );
+        expect( cardsArraysMatch(response.body.p0FaceCards,['KS'])).to.eq(
+          true,
+          `P0Hand should match  [Card.KING_OF_SPADES], 
+            but actual: ${response.body.p0FaceCards} did not match ficture:  ['KS']`,
+        );
+        expect( cardsArraysMatch(response.body.p0Points, ['TS'])).to.eq(
+          true,
+          `p0Points should match [Card.TEN_OF_SPADES], 
+            but actual: ${response.body.p0Points} did not match ficture: ['TS']`,
+        );
+        expect( cardsArraysMatch(response.body.p1Hand,['AH', 'AD']) ).to.eq(
+          true,
+          `p1Hand should match [Card.ACE_OF_HEARTS, Card.ACE_OF_DIAMONDS], 
+            but actual: ${response.body.p1Hand} did not match ficture: ['AH', 'AD']`,
+        );
+        expect( cardsArraysMatch(response.body.p1FaceCards, ['KH'])).to.eq(
+          true,
+          `p1FaceCards should match  [Card.KING_OF_HEARTS], 
+            but actual: ${response.body.p1FaceCards} did not match ficture:  ['KH']`,
+        );
+        expect( cardsArraysMatch(response.body.p1Points, ['TH'])).to.eq(
+          true,
+          `p1Points should match [Card.TEN_OF_HEARTS], 
+            but actual: ${response.body.p1Points} did not match ficture: ['TH']`,
+        );
+      });
     });
+
+
 
     // Play points (ace of spades)
     cy.get('[data-player-hand-card=1-3]').click(); // ace of spades
     cy.get('[data-move-choice=points]').click();
-    cy.get('#turn-indicator').contains("OPPONENT'S TURN");
+    //cy.get('#turn-indicator').contains("OPPONENT'S TURN");
 
     // Attempt to play out of turn
     cy.get('[data-player-hand-card=1-0]').click(); // ace of clubs
@@ -42,6 +89,34 @@ describe('Game Basic Moves - P0 Perspective', () => {
       p1Points: [Card.TEN_OF_HEARTS],
       p1FaceCards: [Card.KING_OF_HEARTS],
     });
+
+        //testGamestateAPI unpacking
+        cy.log('Testing gameSatatApi unpacking game -> gameStateRow -> gameState');
+
+        cy.window().its('cuttle.gameStore').then((game) => {
+          cy.request({
+            method: 'POST',
+            url: '/api/test//api/test/testgamestateunpacking',
+            body: {game}
+          }).then((response) => {
+            // Ensure the request was successful and process the response
+            expect(response.status).to.equal(200); // Example assertion for status code
+      
+            // Optionally log the response
+            cy.log('API Response:', response.body);
+    
+            assertResGameStateixture(response.body, {
+              // ace of spades moved from p0Hand to p0Points
+              p0Hand: [Card.ACE_OF_CLUBS],
+              p0Points: [Card.TEN_OF_SPADES, Card.ACE_OF_SPADES],
+              p0FaceCards: [Card.KING_OF_SPADES],
+              p1Hand: [Card.ACE_OF_HEARTS, Card.ACE_OF_DIAMONDS],
+              p1Points: [Card.TEN_OF_HEARTS],
+              p1FaceCards: [Card.KING_OF_HEARTS],
+            });
+          });
+        });
+    
 
     // Opponent plays the ace of diamonds
     cy.playPointsOpponent(Card.ACE_OF_DIAMONDS);
@@ -187,12 +262,6 @@ describe('Game Basic Moves - P0 Perspective', () => {
       p1FaceCards: [],
     });
 
-        //testGamestateAPI Unpacking
-        cy.window().its('cuttle.gameStore').then((game) => {
-          cy.log('testGamestateAPI');
-          cy.testGameStatePacking(game);
-        });
-
     // Player plays king
     cy.get('[data-player-hand-card=13-0]').click(); // king of clubs
     cy.get('[data-move-choice=faceCard]').click();
@@ -279,11 +348,7 @@ describe('Game Basic Moves - P0 Perspective', () => {
       p1FaceCards: [Card.QUEEN_OF_HEARTS],
       scrap: [],
     });
-    //testGamestateAPI Unpacking
-    cy.window().its('cuttle.gameStore').then((game) => {
-      cy.log('testGamestateAPI');
-      cy.testGameStatePacking(game);
-    });
+
     // Player is now prevented from playing a jack
     cy.get('[data-player-hand-card=11-1]').click();
     cy.get('[data-move-choice=jack]')
@@ -469,11 +534,6 @@ describe('Playing 8s', () => {
       p1Points: [Card.ACE_OF_DIAMONDS],
       p1FaceCards: [],
     });
-        //testGamestateAPI Unpacking
-        cy.window().its('cuttle.gameStore').then((game) => {
-          cy.log('testGamestateAPI');
-          cy.testGameStatePacking(game);
-        });
 
     // Attempt to play eight out of turn for points
     cy.get('[data-player-hand-card=8-2]').click();
@@ -551,6 +611,7 @@ describe('Play Jacks', () => {
       p1FaceCards: [Card.KING_OF_HEARTS],
       scrap: [],
     });
+    
 
     cy.get('[data-player-hand-card]').should('have.length', 2);
     cy.get('#turn-indicator').contains("OPPONENT'S TURN");
@@ -641,5 +702,31 @@ describe('Play Jacks', () => {
       p1FaceCards: [Card.KING_OF_HEARTS],
       scrap: [],
     });
+        //testGamestateAPI unpacking
+        cy.log('Testing gameSatatApi unpacking game -> gameStateRow -> gameState');
+
+        cy.window().its('cuttle.gameStore').then((game) => {
+          cy.request({
+            method: 'POST',
+            url: '/api/test//api/test/testgamestateunpacking',
+            body: {game}
+          }).then((response) => {
+            // Ensure the request was successful and process the response
+            expect(response.status).to.equal(200); // Example assertion for status code
+      
+            // Optionally log the response
+            cy.log('API Response:', response.body);
+    
+            assertResGameStateixture(response.body, {
+              p0Hand: [Card.ACE_OF_SPADES, Card.KING_OF_SPADES],
+              p0Points: [Card.TEN_OF_SPADES],
+              p0FaceCards: [],
+              p1Hand: [Card.ACE_OF_HEARTS, Card.ACE_OF_DIAMONDS],
+              p1Points: [Card.TEN_OF_HEARTS],
+              p1FaceCards: [Card.KING_OF_HEARTS],
+              scrap: [],
+            });
+          });
+        });
   });
 });

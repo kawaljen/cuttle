@@ -107,10 +107,34 @@ module.exports = {
   testGameStatePacking : async function(req, res){
     if(sails.config.custom.useGameStateApi){
       try {
-          const game = req.body;
+          const gamet = req.body.game;
 
-          const addedInfos = { gameId : game.id, playedBy : 1, moveType : 3, phase : 1 , 'p0' : game.players[0], 'p1' : game.players[1]}; 
-          const merged = {...game, ...addedInfos};
+          const addedInfos = { gameId : gamet.id, playedBy : 1, moveType : 3, phase : 1 , 'p0' : gamet.players[0], 'p1' : gamet.players[1]}; 
+          const merged = {...gamet, ...addedInfos};
+          // create gamestate
+          const gameState = new GameState(merged);
+
+          // create gamestateRow
+          const gameStateRowData = await sails.helpers.packGamestate(gameState);
+          const gameStateRow = await GameStateRow.create(gameStateRowData).fetch();
+
+
+          return res.json(gameStateRow);
+
+      } catch (err) {
+        return res.serverError(err);
+      }
+    }
+    return res.badRequest('GameStateApi set to false');
+  },
+
+  testGameStateUnpacking : async function(req, res){
+    if(sails.config.custom.useGameStateApi){
+      try {
+          const gamet = req.body.game;
+
+          const addedInfos = { gameId : gamet.id, playedBy : 1, moveType : 3, phase : 1 , 'p0' : gamet.players[0], 'p1' : gamet.players[1]}; 
+          const merged = {...gamet, ...addedInfos};
           // create gamestate
           const gameState = new GameState(merged);
 
@@ -120,11 +144,12 @@ module.exports = {
 
           // turn gamestateRow back to a gamestate
           const gameStateDataConverted = await sails.helpers.unpackGamestate(gameStateRow, 
-                                                                            game.players[0].id, 
-                                                                            game.players[1].id);
+                                                                              gamet.players[0], 
+                                                                              gamet.players[1]);
           const gameStateConverted = new GameState(gameStateDataConverted);
+          
 
-          return res.json({gameState, gameStateRow, gameStateConverted});
+          return res.json(gameStateConverted);
 
       } catch (err) {
         return res.serverError(err);

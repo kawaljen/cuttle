@@ -1544,15 +1544,3 @@ Cypress.Commands.add('loadGameFixture', (pNum, fixture) => {
     });
 });
 
-Cypress.Commands.add('testGameStatePacking', (game) => {
-  return new Cypress.Promise((resolve, reject) => {
-    io.socket.post('/api/test/testgamestatepacking', game, function (res, jwres) {
-      if (jwres.statusCode !== 200) {
-        return reject(new Error('Failed to load season'));
-      }
-      cy.log(res);
-
-      return resolve(res);
-    });
-  });
-});

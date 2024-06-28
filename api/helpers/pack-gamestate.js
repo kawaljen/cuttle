@@ -15,11 +15,7 @@ module.exports = {
 
   fn: async ({gameState }, exits) => {
 
-    setTimeout(() => {
-
       try{
-        
-          console.log('"Delayed for 1 second."');
         const convertedData={};
 
         const attributesToConvert = [
@@ -42,11 +38,11 @@ module.exports = {
 
         // Correspondance of attribute name in GameStateRow to attribute name in GameState + player
         const playerAttToConvert = [{ rowName : 'p0Hand', gamestateName : 'hand', player : 'p0'}, 
-                                    {rowName :'p1Hand', gamestateName :'hand', player : 'p1'}, 
-                                    {rowName :'p0Points',  gamestateName :'points', player : 'p0'},
-                                    {rowName :'p1Points',  gamestateName :'points', player : 'p1'}, 
-                                    {rowName :'p0FaceCards',  gamestateName :'faceCards', player : 'p0'}, 
-                                    {rowName :'p1FaceCards',  gamestateName :'faceCards', player : 'p1' }]; 
+                                    { rowName :'p1Hand', gamestateName :'hand', player : 'p1'}, 
+                                    { rowName :'p0Points',  gamestateName :'points', player : 'p0'},
+                                    { rowName :'p1Points',  gamestateName :'points', player : 'p1'}, 
+                                    { rowName :'p0FaceCards',  gamestateName :'faceCards', player : 'p0'}, 
+                                    { rowName :'p1FaceCards',  gamestateName :'faceCards', player : 'p1' }]; 
         playerAttToConvert.forEach(attribute => { 
            // ex GameState format for p0Hand : gamestate.p0.hand
           const value = gameState[attribute.player][attribute.gamestateName];
@@ -63,7 +59,6 @@ module.exports = {
     } catch (err) {
         return exits.error(err.message); 
     }
-  }, '"1O000"');
   }
 };
 
