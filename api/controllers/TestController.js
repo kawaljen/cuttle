@@ -104,18 +104,15 @@ module.exports = {
   },
   testGameStatePacking : async function(req, res){
       try {
-          const gamet =  req.body.game;
+        const game =  req.body.game;
+        //Add data needed for a gameState moveType : 3, phase : 1  => random data
+        const addedInfos = { gameId : game.id, playedBy : game.player.id, moveType : 3, phase : 1 , 'p0' : game.players[0], 'p1' : game.players[1]}; 
+        const merged = {...game, ...addedInfos};
 
-          const addedInfos = { gameId : gamet.id, playedBy : 1, moveType : 3, phase : 1 , 'p0' : gamet.players[0], 'p1' : gamet.players[1]}; 
-          const merged = {...gamet, ...addedInfos};
+        //Save Data to a gamestateRow
+        const gameStateRow = await sails.helpers.saveGamestate(gameState);
 
-          // converted data from gamestate format to a gamestateRow format (string representation)
-          const gameStateRowData = await sails.helpers.packGamestate(merged);
-          const gameStateRow = await GameStateRow.create(gameStateRowData).fetch();
-
-          Game.addToCollection(gamet.id, 'gameStates').members([gameStateRow.gameId]);
-
-          return res.json(gameStateRow);
+        return res.json(gameStateRow);
 
       } catch (err) {
         return res.serverError(err);
@@ -138,8 +135,7 @@ module.exports = {
           const p1Data = await User.findOne({id:game.p1});
           await Player.create(p1Data);  
           
-          //create gameste
-          await GameState.create(convertedData);
+
 
           //populate all
           const p0Updated = await Player.findOne({id:game.p0}).populate('hand')

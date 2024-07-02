@@ -26,7 +26,7 @@ module.exports = {
             const value = gameState[attribute];
             if (value !== null && value !== undefined) {
                 if (typeof value === 'string') {
-                  convertedData[attribute]  = utils.convertCardToString(value, gameState.playedBy);
+                  convertedData[attribute]  = utils.convertCardToString(value);
                 } else if (Array.isArray(value)) {
                   convertedData[attribute]  = value.map(card => utils.convertCardToString(card, gameState.playedBy)); 
                 }

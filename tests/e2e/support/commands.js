@@ -1580,35 +1580,7 @@ Cypress.Commands.add('testConvertionGamestateRow', (stringFormat, objectFormat) 
           if (stringFormat.p0Hand !== null || stringFormat.p0Hand !==  undefined) {
             cy.log('Testing gameStateApi packing game gameState -> gameStateRow');
 
-              expect(cardsArraysMatch(res.p0Hand, stringFormat.p0Hand)).to.eq(
-                true,
-                `GameStateRow P0Hand should match ${stringFormat.p0Hand}, 
-                but actual: ${res.p0Hand} did not match fixture`
-              );
-              expect( cardsArraysMatch(res.p0FaceCards, stringFormat.p0FaceCards)).to.eq( 
-                true,
-                `GameStateRow p0FaceCards should match ${stringFormat.p0FaceCards}, 
-                but actual: ${res.p0FaceCards} did not match ficture`);
-
-              expect( cardsArraysMatch(res.p0Points, stringFormat.p0Points)).to.eq( 
-                true,
-                `GameStateRow p0Points should match ${stringFormat.p0Points}, 
-                but actual: ${res.p0Points} did not match ficture`);
-
-              expect( cardsArraysMatch(res.p1Hand, stringFormat.p1Hand) ).to.eq( 
-                true,
-                `GameStateRow p1Hand should match ${stringFormat.p1Hand}, 
-                but actual: ${res.p1Hand} did not match ficture`);
-
-              expect( cardsArraysMatch(res.p1FaceCards, stringFormat.p1FaceCards)).to.eq( 
-                true,
-                `GameStateRow p1FaceCards should match ${stringFormat.p1FaceCards}, 
-                but actual: ${res.p1FaceCards} did not match ficture`);
-
-              expect( cardsArraysMatch(res.p1Points, stringFormat.p1Points)).to.eq( 
-                true,
-                `GameStateRow p1Points should match ${stringFormat.p1Points}, 
-                but actual: ${res.p1Points} did not match ficture`);
+              assertResGameStateString(res, stringFormat);
           }
 
         cy.testConvertionGamestate(res, objectFormat);
