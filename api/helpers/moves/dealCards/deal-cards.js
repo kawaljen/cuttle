@@ -15,10 +15,10 @@ module.exports = {
 
     try {
         const game = await sails.helpers.lockGame(gameData.id);
-        //const currentState = sails.helpers.unpackGameState(game.gameStates[game.gameStates.length - 1]) 
+        //const currentState = sails.helpers.unpackGameState(game.gameStates[game.gameStates.length - 1])
         //TODO Is it first gameStaterow ?
 
-        const requestedMove = sails.helpers.moves.dealcards.parseRequest(game); 
+        const requestedMove = sails.helpers.moves.dealcards.parseRequest({...gameData, ...game});
         // Validate move
         await sails.helpers.moves.dealcards.validate(requestedMove);
         // Move cards around
@@ -32,6 +32,6 @@ module.exports = {
 
     } catch (err) {
         return exits.error ('Error dealings cards : ' + err.message);
-    } 
+    }
   }
 };

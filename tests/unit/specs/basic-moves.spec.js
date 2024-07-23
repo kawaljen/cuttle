@@ -32,7 +32,7 @@ const fixture = {
     p1 : null, //9
     match : null,
     winner : null,
-    players : [
+    /*players : [
       {
         createdAt: Date.now(),
         updatedAt: Date.now(),
@@ -55,7 +55,7 @@ const fixture = {
         game : 1,
         frozenId : null
       }
-    ]   
+    ]*/
 };
 
 
@@ -63,7 +63,12 @@ const fixture = {
 describe('Deals cards', () => {
 
   it('Distribution of cards should be : 5 in p0 hand and 6 in p1 hand, 49 in deck', async () => {
-    const gameState = await sails.helpers.moves.dealcards.dealCards(fixture); 
+    const game = await Game.create(fixture).fetch()
+    await User.create({username: 'myUsername', encryptedPassword: 'xyz123ABCABK7KAL', game : game.id, pNum : 0});
+    await User.create({username: 'definitelyNotTheGovernment6969', encryptedPassword: 'xyz123ABCABK7KAL', game : game.id, pNum : 1});
+    const fullgame = await Game.findOne(game.id).populate('players', { sort: 'pNum' });
+
+    const gameState = await sails.helpers.moves.dealcards.dealCards(fullgame);
     expect(gameState.p0.hand.length).toBe(5);
     expect(gameState.p1.hand.length).toBe(6);
     expect(gameState.deck.length).toBe(49);
