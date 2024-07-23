@@ -231,7 +231,17 @@ module.exports = {
     return res;
   },
 
-  dealCards: function (game, gameUpdates) {
+  dealCards: async function (game, gameUpdates) {
+    const useGameStateApi = true;
+    if (useGameStateApi) {
+       await sails.helpers.unlockGame(game.lock);
+       //Add Players id to Game
+       //const p0 = game.players.find((player) => player.pNum === 0);
+       //const p1 = game.players.find((player) => player.pNum === 1);
+       //Game.updateOne({ id: game.id }).set({p0 : p0.id, p1 : p1.id});
+       return await sails.helpers.moves.dealcards.dealCards({...game, ...gameUpdates}); 
+    }
+
     return new Promise(function makeDeck(resolveMakeDeck) {
       const p0 = game.players.find((player) => player.pNum === 0);
       const p1 = game.players.find((player) => player.pNum === 1);
